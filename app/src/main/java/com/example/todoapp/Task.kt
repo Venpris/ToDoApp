@@ -12,5 +12,7 @@ data class Task (
     val description: String?,
     val date: LocalDate,
     val time: LocalTime?,
-    val isDone: Boolean
+    val isDone: Boolean,
+    val isStarred: Boolean,
+    val subTasks: List<Task>?
 )
