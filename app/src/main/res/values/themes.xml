@@ -8,5 +8,12 @@
         <item name="colorAccent">@color/blue</item>
     </style>
 
+    <style name="TextAppearance.AppCompat.Title" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">roboto</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+    </style>
+
     <style name="Theme.ToDoApp" parent="Base.Theme.ToDoApp" />
 </resources>
