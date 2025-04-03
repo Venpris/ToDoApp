@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Category(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
-    var tasks: List<Task>?
+    var tasks: List<Task>?,
+    val isStarredCategory: Boolean = false
 )
