@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ToDoApp</string>
     <string name="tasks">Tasks</string>
+    <string name="ic_star_desc">Star icon</string>
 </resources>
