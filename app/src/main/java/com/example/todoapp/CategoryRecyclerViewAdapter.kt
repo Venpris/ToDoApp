@@ -20,9 +20,7 @@ class CategoryRecyclerViewAdapter(private val categoryList: List<Category>): Rec
         return CategoryViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
-    }
+    override fun getItemCount(): Int = categoryList.size
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = categoryList[position]
