@@ -4,14 +4,17 @@
     android:layout_width="wrap_content"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/category_button"
+    <Button
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:gravity="center"
-        tools:text="Category"
-        tools:icon="@drawable/ic_star_filled" />
+        android:background="@android:color/transparent" />
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_star_filled"
+        android:layout_gravity="center"
+        android:contentDescription="@string/ic_star_desc" />
 
 </FrameLayout>
