@@ -22,5 +22,12 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="TaskButton" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:textAlignment">viewStart</item>"
+        <item name="fontFamily">roboto</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="Theme.ToDoApp" parent="Base.Theme.ToDoApp" />
 </resources>
