@@ -13,6 +13,7 @@ data class Task (
     val date: LocalDate,
     val time: LocalTime?,
     val isDone: Boolean,
+    val isSelected: Boolean,
     val isStarred: Boolean,
     val subTasks: List<Task>?
 )
