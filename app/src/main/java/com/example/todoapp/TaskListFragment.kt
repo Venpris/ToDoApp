@@ -20,32 +20,32 @@ class TaskListFragment : Fragment() {
     private lateinit var taskRecyclerViewAdapter: TaskRecyclerViewAdapter
 
     private val categoryList = listOf(
-        Category(1, "Starred", null, true),
-        Category(2, "My Tasks", null, false),
-        Category(3, "Work", null, false),
-        Category(4, "School", null, false),
-        Category(5, "Personal", null, false),
-        Category(6, "Other", null, false),
+        Category(1, "Starred", true),
+        Category(2, "My Tasks", false),
+        Category(3, "Work", false),
+        Category(4, "School", false),
+        Category(5, "Personal", false),
+        Category(6, "Other", false),
     )
 
     @RequiresApi(Build.VERSION_CODES.O)
     private val taskList = listOf(
-        Task(1, "Task 1", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(2, "Task 2", null, LocalDate.now(), LocalTime.now(), false, false, true, null),
-        Task(3, "Task 3", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(4, "Task 4", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(5, "Task 5", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(6, "Task 6", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(7, "Task 7", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(8, "Task 8", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(9, "Task 9", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(10, "Task 10", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(11, "Task 11", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(12, "Task 12", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(13, "Task 13", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(14, "Task 14", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(15, "Task 15", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
-        Task(16, "Task 16", null, LocalDate.now(), LocalTime.now(), false, false, false, null),
+        Task(1, "Task 1", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(2, "Task 2", null, LocalDate.now(), LocalTime.now(), null, false, false, true, null),
+        Task(3, "Task 3", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(4, "Task 4", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(5, "Task 5", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(6, "Task 6", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(7, "Task 7", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(8, "Task 8", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(9, "Task 9", null, LocalDate.now(), LocalTime.now(), null,false, false, false, null),
+        Task(10, "Task 10", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(11, "Task 11", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(12, "Task 12", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(13, "Task 13", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(14, "Task 14", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(15, "Task 15", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
+        Task(16, "Task 16", null, LocalDate.now(), LocalTime.now(), null, false, false, false, null),
     )
 
     override fun onCreateView(
