@@ -33,7 +33,13 @@ class TaskListFragment : Fragment() {
         categoryRv = view.findViewById(R.id.category_recycler_view)
         categoryRv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        categoryAdapter = CategoryRecyclerViewAdapter(emptyList())
+        categoryAdapter = CategoryRecyclerViewAdapter(emptyList()) { category ->
+            taskDao // set category click listener
+                .filterTasksByCategory(category.id)
+                .observe(viewLifecycleOwner) { tasks ->
+                    taskAdapter.updateData(tasks)
+                }
+        }
         categoryRv.adapter = categoryAdapter
 
         categoryDao.getAll().observe(viewLifecycleOwner) { list ->

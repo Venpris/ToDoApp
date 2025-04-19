@@ -7,7 +7,10 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 
-class CategoryRecyclerViewAdapter(private var categoryList: List<Category>): RecyclerView.Adapter<CategoryRecyclerViewAdapter.CategoryViewHolder>() {
+class CategoryRecyclerViewAdapter(
+    private var categoryList: List<Category>,
+    private val onCategoryClick: (Category) -> Unit
+): RecyclerView.Adapter<CategoryRecyclerViewAdapter.CategoryViewHolder>() {
     inner class CategoryViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val button: Button = itemView.findViewById(R.id.category_button)
         val icon: ImageView = itemView.findViewById(R.id.category_icon)
@@ -36,6 +39,10 @@ class CategoryRecyclerViewAdapter(private var categoryList: List<Category>): Rec
             holder.button.text = category.name
             holder.icon.visibility = View.GONE
             holder.button.contentDescription = ""
+        }
+
+        holder.button.setOnClickListener {
+            onCategoryClick(category)
         }
     }
 
