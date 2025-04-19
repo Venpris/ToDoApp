@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TaskRecyclerViewAdapter(private val taskList: List<Task>): RecyclerView.Adapter<TaskRecyclerViewAdapter.TaskViewHolder>() {
+class TaskRecyclerViewAdapter(private var taskList: List<Task>): RecyclerView.Adapter<TaskRecyclerViewAdapter.TaskViewHolder>() {
     inner class TaskViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var icon: ImageView = itemView.findViewById(R.id.task_item_star_icon)
         val checkBox: CheckBox = itemView.findViewById(R.id.task_check_box)
@@ -36,5 +36,10 @@ class TaskRecyclerViewAdapter(private val taskList: List<Task>): RecyclerView.Ad
         } else {
             holder.icon.setImageResource(R.drawable.ic_star_empty)
         }
+    }
+
+    fun updateData(newItems: List<Task>) {
+        taskList = newItems
+        notifyDataSetChanged()
     }
 }

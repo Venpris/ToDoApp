@@ -17,10 +17,5 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "task-database"
-        )
     }
 }

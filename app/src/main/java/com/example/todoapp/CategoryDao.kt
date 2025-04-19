@@ -1,5 +1,6 @@
 package com.example.todoapp
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -9,7 +10,7 @@ import androidx.room.Update
 @Dao
 interface CategoryDao {
     @Query("SELECT * FROM categories")
-    fun getAll(): List<Category>
+    fun getAll(): LiveData<List<Category>>
 
     @Insert
     fun insertAll(vararg categories: Category)

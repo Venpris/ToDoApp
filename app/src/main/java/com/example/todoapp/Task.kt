@@ -2,19 +2,16 @@ package com.example.todoapp
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDate
-import java.time.LocalTime
 
 @Entity(tableName = "tasks")
 data class Task (
     @PrimaryKey(autoGenerate = true) val id: Int,
     val title: String,
     val description: String?,
-    val date: LocalDate,
-    val time: LocalTime?,
+    val dateEpochDay: Long,
+    val timeNanoOfDay: Long?, // null if all-day
     val categoryId: Int?,
-    val isDone: Boolean,
-    val isSelected: Boolean,
-    val isStarred: Boolean,
-    val subTasks: List<Task>?
+    val isDone: Boolean = false,
+    val isSelected: Boolean = false,
+    val isStarred: Boolean = false
 )
