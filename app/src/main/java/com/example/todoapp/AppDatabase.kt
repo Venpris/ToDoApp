@@ -28,19 +28,19 @@ abstract class AppDatabase: RoomDatabase() {
                         AppDatabase::class.java,
                         "task_database"
                     )
-                        .addCallback(object : RoomDatabase.Callback() {
-                            override fun onCreate(db: SupportSQLiteDatabase) {
-                                super.onCreate(db)
-                                INSTANCE?.let { database ->
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        database.categoryDao().insertAll(
-                                            Category(1, "Starred", true),
-                                            Category(2, "My Tasks", false)
-                                        )
-                                    }
+                    .addCallback(object : RoomDatabase.Callback() {
+                        override fun onCreate(db: SupportSQLiteDatabase) {
+                            super.onCreate(db)
+                            INSTANCE?.let { database ->
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    database.categoryDao().insertAll(
+                                        Category(1, "Starred", true),
+                                        Category(2, "My Tasks", false)
+                                    )
                                 }
                             }
-                        })
+                        }
+                    })
 
                 val instance = builder.build()
                 INSTANCE = instance
