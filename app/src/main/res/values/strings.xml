@@ -3,4 +3,6 @@
     <string name="tasks">Tasks</string>
     <string name="ic_star_desc">Star icon</string>
     <string name="fab_content_desc">Create a new task</string>
+    <string name="new_task">New Task</string>
+    <string name="edit_task">Edit Task</string>
 </resources>
