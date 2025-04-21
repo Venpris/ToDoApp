@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.Button
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class TaskListFragment : Fragment() {
     private lateinit var categoryRv: RecyclerView
@@ -71,5 +74,9 @@ class TaskListFragment : Fragment() {
                 )
             }
         })
+
+        view.findViewById<FloatingActionButton>(R.id.btn_add).setOnClickListener {
+            findNavController().navigate(R.id.action_taskListFragment_to_createTaskFragment)
+        }
     }
 }
