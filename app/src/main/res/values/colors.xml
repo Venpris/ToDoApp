@@ -8,4 +8,5 @@
     <color name="blue">#2196F3</color>
     <color name="light_blue">#e7f3fe</color>
     <color name="dark_blue">#032749</color>
+    <color name="btn_blue">#BBDEFB</color>
 </resources>

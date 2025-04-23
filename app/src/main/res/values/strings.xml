@@ -12,4 +12,5 @@
     <string name="set_time">Set Time</string>
     <string name="add_a_subtask">Add a Subtask</string>
     <string name="submit">Submit</string>
+    <string name="subtasks">Subtasks</string>
 </resources>
