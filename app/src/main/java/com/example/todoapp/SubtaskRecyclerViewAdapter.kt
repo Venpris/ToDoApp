@@ -33,4 +33,9 @@ class SubtaskRecyclerViewAdapter(private var subtaskList: List<Subtask>): Recycl
         holder.text.text = subtask.title
         holder.checkBox.isChecked = subtask.isSelected
     }
+
+    fun updateData(subtasks: List<Subtask>) {
+        subtaskList = subtasks
+        notifyDataSetChanged()
+    }
 }
