@@ -3,9 +3,13 @@
     <style name="Base.Theme.ToDoApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/darker_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/light_gray</item>
-        <item name="colorAccent">@color/blue</item>
+        <item name="colorOnSecondary">@color/dark_gray</item>
+        <item name="colorOnBackground">@color/dark_gray</item>
+        <item name="colorOnSurface">@color/dark_gray</item>
     </style>
 
     <style name="TextAppearance.AppCompat.Title" parent="TextAppearance.AppCompat">
