@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
 
 class CreateTaskFragment : Fragment() {
     private lateinit var subtaskRv: RecyclerView
@@ -30,6 +33,29 @@ class CreateTaskFragment : Fragment() {
         subtaskAdapter = SubtaskRecyclerViewAdapter(emptyList())
         subtaskRv.adapter = subtaskAdapter
         subtaskRv.layoutManager = LinearLayoutManager(requireContext())
+
+        val datePicker: MaterialDatePicker<Long> = MaterialDatePicker
+            .Builder
+            .datePicker()
+            .setTitleText("Select date")
+            .build()
+
+        val timePicker = MaterialTimePicker
+            .Builder()
+            .setTitleText("Select time")
+            .build()
+
+        view.findViewById<Button>(R.id.btn_set_date).setOnClickListener {
+            if (parentFragmentManager.findFragmentByTag("DATE_PICKER") == null) {
+                datePicker.show(parentFragmentManager, "DATE_PICKER")
+            }
+        }
+
+        view.findViewById<Button>(R.id.btn_set_time).setOnClickListener {
+            if (parentFragmentManager.findFragmentByTag("TIME_PICKER") == null) {
+                timePicker.show(parentFragmentManager, "TIME_PICKER")
+            }
+        }
 
         taskDao.getSubtasksForTask(1).observe(viewLifecycleOwner) { list ->
             subtaskAdapter.updateData(list)
