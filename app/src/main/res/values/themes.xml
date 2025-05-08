@@ -10,6 +10,7 @@
         <item name="colorOnSecondary">@color/dark_gray</item>
         <item name="colorOnBackground">@color/dark_gray</item>
         <item name="colorOnSurface">@color/dark_gray</item>
+        <item name="colorOnSurfaceVariant">@color/dark_gray</item>
     </style>
 
     <style name="TextAppearance.AppCompat.Title" parent="TextAppearance.AppCompat">
@@ -28,7 +29,7 @@
 
     <style name="TaskTitle">
         <item name="android:textColor">@color/dark_gray</item>
-        <item name="android:textAlignment">viewStart</item>"
+        <item name="android:textAlignment">viewStart</item>
         <item name="fontFamily">roboto</item>
         <item name="android:textSize">16sp</item>
     </style>
@@ -65,6 +66,19 @@
         <item name="android:textAlignment">textStart</item>
         <item name="android:paddingStart">16dp</item>
         <item name="paddingEnd">16dp</item>
+    </style>
+
+    <style name="DatePickerDialogTheme"
+        parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/blue</item>
+        <item name="colorPrimary">@android:color/transparent</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:datePickerStyle">@style/DatePickerStyle</item>
+    </style>
+
+    <style name="DatePickerStyle"
+        parent="@android:style/Widget.Material.DatePicker">
+        <item name="android:headerBackground">@android:color/transparent</item>
     </style>
 
     <style name="Theme.ToDoApp" parent="Base.Theme.ToDoApp" />

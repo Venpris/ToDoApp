@@ -1,5 +1,6 @@
 package com.example.todoapp
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -34,12 +35,6 @@ class CreateTaskFragment : Fragment() {
         subtaskRv.adapter = subtaskAdapter
         subtaskRv.layoutManager = LinearLayoutManager(requireContext())
 
-        val datePicker: MaterialDatePicker<Long> = MaterialDatePicker
-            .Builder
-            .datePicker()
-            .setTitleText("Select date")
-            .build()
-
         val timePicker = MaterialTimePicker
             .Builder()
             .setTitleText("Select time")
@@ -47,7 +42,8 @@ class CreateTaskFragment : Fragment() {
 
         view.findViewById<Button>(R.id.btn_set_date).setOnClickListener {
             if (parentFragmentManager.findFragmentByTag("DATE_PICKER") == null) {
-                datePicker.show(parentFragmentManager, "DATE_PICKER")
+                val dpFragment = DatePickerFragment()
+                dpFragment.show(parentFragmentManager, "DATE_PICKER")
             }
         }
 
