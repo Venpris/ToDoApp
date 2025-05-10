@@ -35,15 +35,22 @@ class CreateTaskFragment : Fragment() {
         subtaskRv.adapter = subtaskAdapter
         subtaskRv.layoutManager = LinearLayoutManager(requireContext())
 
+        val datePicker = MaterialDatePicker
+            .Builder
+            .datePicker()
+            .setTheme(R.style.DatePickerTheme)
+            .setTitleText("Select date")
+            .build()
+
         val timePicker = MaterialTimePicker
             .Builder()
+            .setTheme(R.style.TimePickerTheme)
             .setTitleText("Select time")
             .build()
 
         view.findViewById<Button>(R.id.btn_set_date).setOnClickListener {
             if (parentFragmentManager.findFragmentByTag("DATE_PICKER") == null) {
-                val dpFragment = DatePickerFragment()
-                dpFragment.show(parentFragmentManager, "DATE_PICKER")
+                datePicker.show(parentFragmentManager, "DATE_PICKER")
             }
         }
 

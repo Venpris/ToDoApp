@@ -68,17 +68,52 @@
         <item name="paddingEnd">16dp</item>
     </style>
 
-    <style name="DatePickerDialogTheme"
-        parent="ThemeOverlay.AppCompat.Dialog.Alert">
-        <item name="colorAccent">@color/blue</item>
+    <style name="DatePickerTheme" parent="ThemeOverlay.Material3.MaterialCalendar">
         <item name="colorPrimary">@android:color/transparent</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="android:datePickerStyle">@style/DatePickerStyle</item>
+        <item name="colorOnPrimary">@color/dark_gray</item>
+        <item name="materialCalendarStyle">@style/DatePickerStyle</item>
     </style>
 
-    <style name="DatePickerStyle"
-        parent="@android:style/Widget.Material.DatePicker">
-        <item name="android:headerBackground">@android:color/transparent</item>
+    <style name="DatePickerStyle" parent="Widget.Material3.MaterialCalendar">
+        <item name="dayTodayStyle">@style/DatePickerToday</item>
+        <item name="daySelectedStyle">@style/DatePickerSelectedDate</item>
+        <item name="yearTodayStyle">@style/DatePickerCurrentYear</item>
+    </style>
+
+    <style name="DatePickerToday" parent="Widget.Material3.MaterialCalendar.Day.Today">
+        <item name="itemTextColor">@color/blue</item>
+        <item name="itemStrokeColor">@color/blue</item>
+    </style>
+
+    <style name="DatePickerSelectedDate" parent="Widget.Material3.MaterialCalendar.Day.Selected">
+        <item name="itemFillColor">@color/blue</item>
+        <item name="itemTextColor">@color/white</item>
+    </style>
+
+    <style name="DatePickerCurrentYear" parent="Widget.Material3.MaterialCalendar.Year.Today">
+        <item name="itemTextColor">@color/blue</item>
+    </style>
+
+    <style name="TimePickerTheme" parent="ThemeOverlay.Material3.MaterialTimePicker">
+        <item name="colorPrimary">@android:color/transparent</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="materialClockStyle">@style/ClockStyle</item>
+        <item name="chipStyle">@style/ChipStyle</item>
+        <item name="materialButtonOutlinedStyle">@style/TimePickerButton</item>
+    </style>
+
+    <style name="TimePickerButton" parent="Widget.Material3.MaterialTimePicker.Button">
+        <item name="backgroundTint">@color/time_picker_toggle_color</item>
+    </style>
+
+    <style name="ChipStyle" parent="Widget.Material3.MaterialTimePicker.Display">
+        <item name="chipBackgroundColor">@color/time_picker_display_color</item>
+        <item name="android:textColor">@color/dark_blue</item>
+        <item name="rippleColor">@color/light_blue</item>
+    </style>
+
+    <style name="ClockStyle" parent="Widget.Material3.MaterialTimePicker.Clock">
+        <item name="clockHandColor">@color/blue</item>
     </style>
 
     <style name="Theme.ToDoApp" parent="Base.Theme.ToDoApp" />
