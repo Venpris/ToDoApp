@@ -1,6 +1,5 @@
 package com.example.todoapp
 
-import android.app.DatePickerDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 
@@ -26,6 +26,8 @@ class CreateTaskFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initToolbar()
 
         val db = AppDatabase.getDatabase(requireContext())
         val taskDao = db.taskDao()
@@ -69,6 +71,13 @@ class CreateTaskFragment : Fragment() {
 
         taskDao.getSubtasksForTask(1).observe(viewLifecycleOwner) { list ->
             subtaskAdapter.updateData(list)
+        }
+    }
+
+    private fun initToolbar() {
+        val toolbar: MaterialToolbar = view?.findViewById(R.id.header_toolbar)!!
+        toolbar.setNavigationOnClickListener { _ ->
+            parentFragmentManager.popBackStack()
         }
     }
 }
