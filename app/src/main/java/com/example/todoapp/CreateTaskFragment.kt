@@ -60,6 +60,13 @@ class CreateTaskFragment : Fragment() {
             }
         }
 
+        view.findViewById<Button>(R.id.btn_add_subtask).setOnClickListener {
+            val dialog = CreateSubtaskDialogFragment()
+            if (parentFragmentManager.findFragmentByTag("CREATE_SUBTASK_DIALOG") == null) {
+                dialog.show(parentFragmentManager, "CREATE_SUBTASK_DIALOG")
+            }
+        }
+
         taskDao.getSubtasksForTask(1).observe(viewLifecycleOwner) { list ->
             subtaskAdapter.updateData(list)
         }

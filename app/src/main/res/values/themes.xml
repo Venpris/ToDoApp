@@ -11,6 +11,7 @@
         <item name="colorOnBackground">@color/dark_gray</item>
         <item name="colorOnSurface">@color/dark_gray</item>
         <item name="colorOnSurfaceVariant">@color/dark_gray</item>
+        <item name="materialAlertDialogTheme">@style/DialogStyle</item>
     </style>
 
     <style name="TextAppearance.AppCompat.Title" parent="TextAppearance.AppCompat">
@@ -114,6 +115,10 @@
 
     <style name="ClockStyle" parent="Widget.Material3.MaterialTimePicker.Clock">
         <item name="clockHandColor">@color/blue</item>
+    </style>
+
+    <style name="DialogStyle" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@android:color/transparent</item>
     </style>
 
     <style name="Theme.ToDoApp" parent="Base.Theme.ToDoApp" />
