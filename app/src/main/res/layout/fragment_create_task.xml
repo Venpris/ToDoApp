@@ -49,9 +49,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical"
-        android:layout_marginTop="24dp"
-        android:divider="@color/dark_gray"
-        android:showDividers="middle" >
+        android:layout_marginTop="24dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_set_date"
@@ -61,13 +59,13 @@
             style="@style/SetDateTimeButton"
             android:background="@android:color/transparent"
             app:icon="@drawable/ic_calendar_blank"
-            app:iconTint="@color/dark_gray"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btn_set_time"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/description_input"
-            app:layout_constraintVertical_bias="0.10"
-            app:layout_constraintVertical_chainStyle="packed"/>
+            app:iconTint="@color/dark_gray" />
+
+        <View
+            android:id="@+id/date_time_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_gray" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_set_time"
@@ -77,10 +75,7 @@
             android:background="@android:color/transparent"
             style="@style/SetDateTimeButton"
             app:icon="@drawable/ic_clock_outline"
-            app:iconTint="@color/dark_gray"
-            app:layout_constraintTop_toBottomOf="@id/btn_set_date"
-            app:layout_constraintStart_toEndOf="@id/btn_set_date"
-            app:layout_constraintEnd_toStartOf="@id/btn_add_subtask" />
+            app:iconTint="@color/dark_gray" />
 
     </LinearLayout>
 
