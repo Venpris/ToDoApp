@@ -15,6 +15,8 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import java.time.Instant
 import java.time.ZoneId
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class CreateTaskFragment : Fragment() {
     private lateinit var subtaskRv: RecyclerView
@@ -59,6 +61,7 @@ class CreateTaskFragment : Fragment() {
         var selectedMinute: Int? = null
 
         val dateButton = view.findViewById<Button>(R.id.btn_set_date)
+        val timeButton = view.findViewById<Button>(R.id.btn_set_time)
 
         dateButton.setOnClickListener {
             if (parentFragmentManager.findFragmentByTag("DATE_PICKER") == null) {
@@ -69,9 +72,15 @@ class CreateTaskFragment : Fragment() {
         datePicker.addOnPositiveButtonClickListener { selection ->
             selectedDateInMillis = selection
             dateButton.setTextColor(resources.getColor(R.color.dark_gray, null))
+            
+            val selectedDate = Instant.ofEpochMilli(selection)
+                .atZone(ZoneId.of("UTC"))
+                .toLocalDate()
+            val formattedDate = selectedDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
+            dateButton.text = formattedDate
         }
 
-        view.findViewById<Button>(R.id.btn_set_time).setOnClickListener {
+        timeButton.setOnClickListener {
             if (parentFragmentManager.findFragmentByTag("TIME_PICKER") == null) {
                 timePicker.show(parentFragmentManager, "TIME_PICKER")
             }
@@ -80,6 +89,10 @@ class CreateTaskFragment : Fragment() {
         timePicker.addOnPositiveButtonClickListener {
             selectedHour = timePicker.hour
             selectedMinute = timePicker.minute
+
+            val selectedTime = LocalTime.of(timePicker.hour, timePicker.minute)
+            val formattedTime = selectedTime.format(DateTimeFormatter.ofPattern("h:mm a"))
+            timeButton.text = formattedTime
         }
 
         view.findViewById<Button>(R.id.btn_add_subtask).setOnClickListener {
@@ -101,13 +114,11 @@ class CreateTaskFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Convert date from milliseconds to epoch days
             val epochDay = Instant.ofEpochMilli(selectedDateInMillis!!)
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneId.of("UTC"))
                 .toLocalDate()
                 .toEpochDay()
 
-            // Convert time
             val timeNanoOfDay = if (selectedHour != null && selectedMinute != null) {
                 (selectedHour!! * 3600L + selectedMinute!! * 60L) * 1_000_000_000L
             } else {
