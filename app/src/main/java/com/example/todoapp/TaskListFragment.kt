@@ -11,10 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
 
 class TaskListFragment : Fragment() {
-    private lateinit var categoryRv: RecyclerView
-    private lateinit var categoryAdapter: CategoryRecyclerViewAdapter
     private lateinit var taskRv: RecyclerView
     private lateinit var taskAdapter: TaskRecyclerViewAdapter
 
@@ -32,21 +31,16 @@ class TaskListFragment : Fragment() {
         val db = AppDatabase.getDatabase(requireContext())
         val taskDao = db.taskDao()
         val categoryDao = db.categoryDao()
-
-        categoryRv = view.findViewById(R.id.category_recycler_view)
-        categoryRv.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        categoryAdapter = CategoryRecyclerViewAdapter(emptyList()) { category ->
-            taskDao // set category click listener
-                .filterTasksByCategory(category.id)
-                .observe(viewLifecycleOwner) { tasks ->
-                    taskAdapter.updateData(tasks)
-                }
-        }
-        categoryRv.adapter = categoryAdapter
+        val categories: TabLayout = view.findViewById(R.id.tab_layout)
 
         categoryDao.getAll().observe(viewLifecycleOwner) { list ->
-            categoryAdapter.updateData(list)
+            for (category in list) {
+                if (category.isStarredCategory) {
+                    categories.addTab(categories.newTab().setIcon(R.drawable.ic_star_filled))
+                } else {
+                    categories.addTab(categories.newTab().setText(category.name))
+                }
+            }
         }
 
         taskRv = view.findViewById(R.id.task_recycler_view)
