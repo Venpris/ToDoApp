@@ -33,16 +33,6 @@ class TaskListFragment : Fragment() {
         val categoryDao = db.categoryDao()
         val categories: TabLayout = view.findViewById(R.id.tab_layout)
 
-        categoryDao.getAll().observe(viewLifecycleOwner) { list ->
-            for (category in list) {
-                if (category.isStarredCategory) {
-                    categories.addTab(categories.newTab().setIcon(R.drawable.ic_star_filled))
-                } else {
-                    categories.addTab(categories.newTab().setText(category.name))
-                }
-            }
-        }
-
         taskRv = view.findViewById(R.id.task_recycler_view)
         taskRv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -51,6 +41,35 @@ class TaskListFragment : Fragment() {
 
         taskDao.getAll().observe(viewLifecycleOwner) { list ->
             taskAdapter.updateData(list)
+        }
+
+        categoryDao.getAll().observe(viewLifecycleOwner) { list ->
+            for (category in list) {
+                if (category.isStarredCategory) {
+                    categories.addTab(categories.newTab().setIcon(R.drawable.ic_star_filled))
+                } else {
+                    categories.addTab(categories.newTab().setText(category.name))
+                }
+            }
+
+            categories.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    taskDao.filterTasksByCategory(tab.position + 1)
+                        .observe(viewLifecycleOwner) { tasks ->
+                            taskAdapter.updateData(tasks)
+                        }
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab) {
+                }
+
+                override fun onTabReselected(tab: TabLayout.Tab) {
+                }
+            })
+
+            if (categories.tabCount >= 2) {
+                categories.getTabAt(1)?.select()
+            }
         }
 
         // Set padding to recycler view equal to header height
