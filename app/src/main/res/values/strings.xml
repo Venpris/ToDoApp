@@ -8,6 +8,7 @@
     <string name="title">Title*</string>
     <string name="description">Description</string>
     <string name="category">Category</string>
+    <string name="new_category">New Category</string>
     <string name="set_date">Set Date*</string>
     <string name="set_time">Set Time</string>
     <string name="add_subtask">Add Subtask</string>
@@ -16,4 +17,5 @@
     <string name="new_subtask">New Subtask</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="tab_icon_desc">Tab icon</string>
 </resources>

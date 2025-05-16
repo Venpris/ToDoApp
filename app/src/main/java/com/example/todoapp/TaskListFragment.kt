@@ -1,11 +1,14 @@
 package com.example.todoapp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +27,7 @@ class TaskListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_task_list, container, false)
     }
 
+    @SuppressLint("InflateParams")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -52,6 +56,18 @@ class TaskListFragment : Fragment() {
                     categories.newTab().setText(category.name).setTag(category.id)
                 )
             }
+
+            val newListTab = categories.newTab().setTag(-1)
+            val tabView =
+                LayoutInflater.from(requireContext()).inflate(R.layout.custom_tab_layout, null)
+            val tabIcon = tabView.findViewById<ImageView>(R.id.tab_icon)
+            val tabText = tabView.findViewById<TextView>(R.id.tab_text)
+
+            tabIcon.setImageResource(R.drawable.ic_material_add)
+            tabText.text = getString(R.string.new_category)
+
+            newListTab.customView = tabView
+            categories.addTab(newListTab)
 
             categories.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
