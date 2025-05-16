@@ -131,7 +131,7 @@ class CreateTaskFragment : Fragment() {
                 description = description,
                 dateEpochDay = epochDay,
                 timeNanoOfDay = timeNanoOfDay,
-                categoryId = 2, // My Tasks
+                categoryId = 1, // My Tasks
                 isDone = false,
                 isSelected = false,
                 isStarred = false

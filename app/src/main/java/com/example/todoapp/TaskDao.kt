@@ -25,6 +25,9 @@ interface TaskDao {
     @Query("SELECT * FROM subtasks WHERE taskId = :taskId")
     fun getSubtasksForTask(taskId: Int): LiveData<List<Subtask>>
 
+    @Query("SELECT * FROM tasks WHERE id = :taskId")
+    fun getTaskById(taskId: Int): LiveData<Task>
+
     @Insert
     fun insertAll(vararg tasks: Task)
 

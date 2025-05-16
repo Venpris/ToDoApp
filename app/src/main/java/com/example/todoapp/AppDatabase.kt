@@ -34,8 +34,7 @@ abstract class AppDatabase: RoomDatabase() {
                             INSTANCE?.let { database ->
                                 CoroutineScope(Dispatchers.IO).launch {
                                     database.categoryDao().insertAll(
-                                        Category(1, "Starred", true),
-                                        Category(2, "My Tasks", false)
+                                        Category(1, "My Tasks")
                                     )
                                 }
                             }
