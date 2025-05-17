@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.annotation.MenuRes
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -61,9 +63,19 @@ class TaskListFragment : Fragment() {
             categories.addTab(categories.newTab().setIcon(R.drawable.ic_star_filled).setTag(0))
 
             for (category in categoryList) {
-                categories.addTab(
-                    categories.newTab().setText(category.name).setTag(category.id)
-                )
+                val tab = categories.newTab().setText(category.name).setTag(category.id)
+                categories.addTab(tab)
+
+                val tabView = tab.view
+                tabView.setOnLongClickListener {
+                    val categoryId = tab.tag as Int
+                    if (categoryId <= 0 || categoryId == 1) {
+                        false
+                    } else {
+                        showMenu(it, R.menu.category_menu, categoryDao)
+                        true
+                    }
+                }
             }
 
             val newListTab = categories.newTab().setTag(-1)
@@ -143,5 +155,31 @@ class TaskListFragment : Fragment() {
         view.findViewById<FloatingActionButton>(R.id.btn_add).setOnClickListener {
             findNavController().navigate(R.id.action_taskListFragment_to_createTaskFragment)
         }
+    }
+
+    private fun showMenu(v: View, @MenuRes menuRes: Int, categoryDao: CategoryDao) {
+        val popup = PopupMenu(requireContext(), v)
+        popup.menuInflater.inflate(menuRes, popup.menu)
+
+        popup.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.rename_category -> {
+                    val dialog = RenameCategoryDialogFragment()
+                    if (parentFragmentManager.findFragmentByTag("RENAME_CATEGORY_DIALOG") == null) {
+                        dialog.show(parentFragmentManager, "RENAME_CATEGORY_DIALOG")
+                    }
+                    true
+                }
+
+                R.id.delete_category -> {
+                    // TODO: delete category
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        popup.show()
     }
 }

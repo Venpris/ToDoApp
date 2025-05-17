@@ -7,10 +7,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
-        android:id="@+id/tv_new_subtask"
+        android:id="@+id/tv_rename_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/new_subtask"
+        android:text="@string/rename_category"
         android:textAlignment="center"
         style="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintTop_toTopOf="parent"
@@ -23,7 +23,7 @@
         android:id="@+id/title_input"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tv_new_subtask"
+        app:layout_constraintTop_toBottomOf="@id/tv_rename_category"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" >
 
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/title"
-            android:maxLength="30"
+            android:maxLength="20"
             android:textColorHint="@color/dark_gray"/>
     </com.google.android.material.textfield.TextInputLayout>
 
