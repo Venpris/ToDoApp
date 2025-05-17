@@ -29,7 +29,6 @@ class TaskListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_task_list, container, false)
     }
 
@@ -53,9 +52,9 @@ class TaskListFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener(
             "categoryNewNameRequest",
             viewLifecycleOwner
-        ){_, bundle ->
+        ) { _, bundle ->
             val categoryId = bundle.getInt("categoryId")
-            val newName = bundle.getString("newName","")
+            val newName = bundle.getString("newName", "")
 
             lifecycleScope.launch(Dispatchers.IO) {
                 val updatedCategory = Category(categoryId, newName)
@@ -76,6 +75,10 @@ class TaskListFragment : Fragment() {
 
         categoryDao.getAll().observe(viewLifecycleOwner) { categoryList ->
             categories.removeAllTabs()
+
+            // We need to prevent the tab selection listener from triggering during setup
+            // Clear any existing listeners before adding new ones
+            categories.clearOnTabSelectedListeners()
 
             categories.addTab(categories.newTab().setIcon(R.drawable.ic_star_filled).setTag(0))
 
@@ -105,6 +108,10 @@ class TaskListFragment : Fragment() {
             tabIcon.setImageResource(R.drawable.ic_material_add)
             tabText.text = getString(R.string.new_category)
 
+            tabView.setOnClickListener {
+                findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
+            }
+
             newListTab.customView = tabView
             categories.addTab(newListTab)
 
@@ -124,16 +131,12 @@ class TaskListFragment : Fragment() {
 
             categories.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
-                    val categoryId = tab.tag as Int
-                    if (categoryId == 0) {
-                        taskDao.getStarredTasks()
-                            .observe(viewLifecycleOwner) { tasks ->
-                                taskAdapter.updateData(tasks)
-                            }
-                    } else if (categoryId == -1) {
-                        findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
-                    } else {
-                        taskDao.filterTasksByCategory(categoryId)
+                    when (val categoryId = tab.tag as Int) {
+                        0 -> taskDao.getStarredTasks().observe(viewLifecycleOwner) { tasks ->
+                            taskAdapter.updateData(tasks)
+                        }
+
+                        else -> taskDao.filterTasksByCategory(categoryId)
                             .observe(viewLifecycleOwner) { tasks ->
                                 taskAdapter.updateData(tasks)
                             }
@@ -190,7 +193,16 @@ class TaskListFragment : Fragment() {
                 }
 
                 R.id.delete_category -> {
-                    // TODO: delete category
+                    categoryDao.getCategoryById(categoryId).observe(viewLifecycleOwner) { category ->
+                        if (category != null) {
+                            categoryDao.getCategoryById(categoryId)
+                                .removeObservers(viewLifecycleOwner)
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                categoryDao.deleteCategories(category)
+                                selectCategoryId = 1
+                            }
+                        }
+                    }
                     true
                 }
 

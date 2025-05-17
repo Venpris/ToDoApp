@@ -12,6 +12,9 @@ interface CategoryDao {
     @Query("SELECT * FROM categories")
     fun getAll(): LiveData<List<Category>>
 
+    @Query("SELECT * FROM categories WHERE id = :id")
+    fun getCategoryById(id: Int): LiveData<Category>
+
     @Insert
     fun insertAll(vararg categories: Category)
 

@@ -6,9 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import android.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CreateCategoryFragment : Fragment() {
 
@@ -33,10 +36,10 @@ class CreateCategoryFragment : Fragment() {
 
             if (!validateTitle(name, view.findViewById(R.id.title_input))) return@setOnClickListener
 
-            Thread {
+            lifecycleScope.launch(Dispatchers.IO) {
                 categoryDao.insertAll(category)
                 val categoryId = categoryDao.getLastInsertedCategory()
-                activity?.runOnUiThread {
+                lifecycleScope.launch(Dispatchers.Main) {
                     Toast.makeText(
                         requireContext(),
                         "Category created successfully",
@@ -48,17 +51,17 @@ class CreateCategoryFragment : Fragment() {
                             putInt("categoryId", categoryId)
                         }
                     )
-                    parentFragmentManager.popBackStack()
+                    findNavController().popBackStack()
                 }
-            }.start()
+            }
         }
     }
 
     private fun initToolbar() {
         val toolbar: MaterialToolbar = view?.findViewById(R.id.header_toolbar)!!
         toolbar.title = getString(R.string.new_category)
-        toolbar.setNavigationOnClickListener { _ ->
-            parentFragmentManager.popBackStack()
+        toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
