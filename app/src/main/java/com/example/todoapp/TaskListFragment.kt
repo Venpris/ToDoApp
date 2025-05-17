@@ -75,9 +75,6 @@ class TaskListFragment : Fragment() {
 
         categoryDao.getAll().observe(viewLifecycleOwner) { categoryList ->
             categories.removeAllTabs()
-
-            // We need to prevent the tab selection listener from triggering during setup
-            // Clear any existing listeners before adding new ones
             categories.clearOnTabSelectedListeners()
 
             categories.addTab(categories.newTab().setIcon(R.drawable.ic_star_filled).setTag(0))
