@@ -1,9 +1,13 @@
 package com.example.todoapp
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
 
 class RenameCategoryDialogFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -11,16 +15,40 @@ class RenameCategoryDialogFragment: DialogFragment() {
             val builder = MaterialAlertDialogBuilder(it)
             val inflater = requireActivity().layoutInflater
 
-            builder.setView(inflater.inflate(R.layout.rename_category_dialog, null))
-                .setPositiveButton(R.string.ok
-                ) { dialog, id ->
-                    //TODO: Update category
-                }
-                .setNegativeButton(R.string.cancel
-                ) { dialog, _ ->
+            val dialogView = inflater.inflate(R.layout.rename_category_dialog, null)
+            builder.setView(dialogView)
+                .setPositiveButton(R.string.ok, null)
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
                     dialog?.cancel()
                 }
-            builder.create()
+
+            val dialog = builder.create()
+
+            dialog.setOnShowListener { dialogInterface ->
+                val positiveButton =
+                    (dialogInterface as AlertDialog).getButton(DialogInterface.BUTTON_POSITIVE)
+                positiveButton.setOnClickListener {
+                    val titleInputLayout =
+                        dialogView.findViewById<TextInputLayout>(R.id.title_input)
+                    val title = titleInputLayout.editText?.text.toString() ?: ""
+                    if (validateTitle(title, titleInputLayout)) {
+                        // TODO: Add subtask to database
+                        dialog.dismiss()
+                    }
+                }
+            }
+
+            dialog
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    private fun validateTitle(title: String, titleInputLayout: TextInputLayout): Boolean {
+        if (title.isEmpty()) {
+            titleInputLayout.error = "Title is required"
+            Toast.makeText(requireContext(), "Title is required", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        titleInputLayout.error = null
+        return true
     }
 }
