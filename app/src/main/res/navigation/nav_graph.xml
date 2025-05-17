@@ -13,10 +13,18 @@
         <action
             android:id="@+id/action_taskListFragment_to_createTaskFragment"
             app:destination="@id/createTaskFragment" />
+        <action
+            android:id="@+id/action_taskListFragment_to_createCategoryFragment"
+            app:destination="@id/createCategoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/createTaskFragment"
         android:name="com.example.todoapp.CreateTaskFragment"
         android:label="fragment_create_task"
         tools:layout="@layout/fragment_create_task" />
+    <fragment
+        android:id="@+id/createCategoryFragment"
+        android:name="com.example.todoapp.CreateCategoryFragment"
+        android:label="fragment_create_category"
+        tools:layout="@layout/fragment_create_category" />
 </navigation>

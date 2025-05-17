@@ -15,6 +15,9 @@ interface CategoryDao {
     @Insert
     fun insertAll(vararg categories: Category)
 
+    @Query("SELECT id FROM categories ORDER BY id DESC LIMIT 1")
+    fun getLastInsertedCategory(): Int
+
     @Delete
     fun deleteCategories(vararg categories: Category)
 

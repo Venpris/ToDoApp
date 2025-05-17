@@ -7,11 +7,13 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/header_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:navigationIcon="@drawable/ic_close"
-        app:navigationIconTint="@color/dark_gray"/>
+        app:navigationIconTint="@color/dark_gray"
+        app:titleTextAppearance="@style/SubtitleText"
+        app:titleMargin="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

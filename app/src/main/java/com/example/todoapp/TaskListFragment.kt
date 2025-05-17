@@ -18,6 +18,7 @@ import com.google.android.material.tabs.TabLayout
 class TaskListFragment : Fragment() {
     private lateinit var taskRv: RecyclerView
     private lateinit var taskAdapter: TaskRecyclerViewAdapter
+    private var pendingCategoryIdToSelect: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +36,14 @@ class TaskListFragment : Fragment() {
         val taskDao = db.taskDao()
         val categoryDao = db.categoryDao()
         val categories: TabLayout = view.findViewById(R.id.tab_layout)
+
+        parentFragmentManager.setFragmentResultListener(
+            "newCategoryRequest",
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val newCategoryId = bundle.getInt("categoryId")
+            pendingCategoryIdToSelect = newCategoryId
+        }
 
         taskRv = view.findViewById(R.id.task_recycler_view)
         taskRv.layoutManager =
@@ -69,6 +78,20 @@ class TaskListFragment : Fragment() {
             newListTab.customView = tabView
             categories.addTab(newListTab)
 
+            var tabWasSelected = false
+
+            pendingCategoryIdToSelect?.let { categoryId ->
+                for (i in 0 until categories.tabCount) {
+                    val tab = categories.getTabAt(i)
+                    if (tab?.tag as? Int == categoryId) {
+                        tab.select()
+                        pendingCategoryIdToSelect = null
+                        tabWasSelected = true
+                        return@let
+                    }
+                }
+            }
+
             categories.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     val categoryId = tab.tag as Int
@@ -77,6 +100,8 @@ class TaskListFragment : Fragment() {
                             .observe(viewLifecycleOwner) { tasks ->
                                 taskAdapter.updateData(tasks)
                             }
+                    } else if (categoryId == -1) {
+                        findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
                     } else {
                         taskDao.filterTasksByCategory(categoryId)
                             .observe(viewLifecycleOwner) { tasks ->
@@ -93,7 +118,9 @@ class TaskListFragment : Fragment() {
             })
 
             if (categories.tabCount >= 2) {
-                categories.getTabAt(1)?.select()
+                if (!tabWasSelected) {
+                    categories.getTabAt(1)?.select()
+                }
             }
         }
 
