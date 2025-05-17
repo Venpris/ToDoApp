@@ -77,6 +77,8 @@ class TaskListFragment : Fragment() {
                             .observe(viewLifecycleOwner) { tasks ->
                                 taskAdapter.updateData(tasks)
                             }
+                    } else if (categoryId == -1) {
+                        //TODO: Make new category dialog
                     } else {
                         taskDao.filterTasksByCategory(categoryId)
                             .observe(viewLifecycleOwner) { tasks ->
