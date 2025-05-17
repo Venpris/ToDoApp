@@ -96,7 +96,7 @@ class CreateTaskFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.btn_add_subtask).setOnClickListener {
-            val dialog = CreateNewDialogFragment.newInstance(getString(R.string.add_subtask))
+            val dialog = CreateSubtaskDialogFragment()
             if (parentFragmentManager.findFragmentByTag("CREATE_SUBTASK_DIALOG") == null) {
                 dialog.show(parentFragmentManager, "CREATE_SUBTASK_DIALOG")
             }
