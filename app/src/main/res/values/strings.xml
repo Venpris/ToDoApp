@@ -5,7 +5,8 @@
     <string name="fab_content_desc">Create a new task</string>
     <string name="new_task">New Task</string>
     <string name="edit_task">Edit Task</string>
-    <string name="title">Title*</string>
+    <string name="title">Title</string>
+    <string name="title_required">Title*</string>
     <string name="description">Description</string>
     <string name="category">Category</string>
     <string name="new_category">New Category</string>

@@ -11,16 +11,19 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.annotation.MenuRes
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class TaskListFragment : Fragment() {
     private lateinit var taskRv: RecyclerView
     private lateinit var taskAdapter: TaskRecyclerViewAdapter
-    private var pendingCategoryIdToSelect: Int? = null
+    private var selectCategoryId: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +47,21 @@ class TaskListFragment : Fragment() {
             viewLifecycleOwner
         ) { _, bundle ->
             val newCategoryId = bundle.getInt("categoryId")
-            pendingCategoryIdToSelect = newCategoryId
+            selectCategoryId = newCategoryId
+        }
+
+        parentFragmentManager.setFragmentResultListener(
+            "categoryNewNameRequest",
+            viewLifecycleOwner
+        ){_, bundle ->
+            val categoryId = bundle.getInt("categoryId")
+            val newName = bundle.getString("newName","")
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                val updatedCategory = Category(categoryId, newName)
+                categoryDao.updateCategories(updatedCategory)
+                selectCategoryId = categoryId
+            }
         }
 
         taskRv = view.findViewById(R.id.task_recycler_view)
@@ -69,10 +86,11 @@ class TaskListFragment : Fragment() {
                 val tabView = tab.view
                 tabView.setOnLongClickListener {
                     val categoryId = tab.tag as Int
+                    val currentName = tab.text.toString()
                     if (categoryId <= 0 || categoryId == 1) {
                         false
                     } else {
-                        showMenu(it, R.menu.category_menu, categoryDao)
+                        showMenu(it, R.menu.category_menu, categoryId, currentName, categoryDao)
                         true
                     }
                 }
@@ -92,12 +110,12 @@ class TaskListFragment : Fragment() {
 
             var tabWasSelected = false
 
-            pendingCategoryIdToSelect?.let { categoryId ->
+            selectCategoryId?.let { categoryId ->
                 for (i in 0 until categories.tabCount) {
                     val tab = categories.getTabAt(i)
                     if (tab?.tag as? Int == categoryId) {
                         tab.select()
-                        pendingCategoryIdToSelect = null
+                        selectCategoryId = null
                         tabWasSelected = true
                         return@let
                     }
@@ -157,14 +175,14 @@ class TaskListFragment : Fragment() {
         }
     }
 
-    private fun showMenu(v: View, @MenuRes menuRes: Int, categoryDao: CategoryDao) {
+    private fun showMenu(v: View, @MenuRes menuRes: Int, categoryId: Int, currentName: String, categoryDao: CategoryDao) {
         val popup = PopupMenu(requireContext(), v)
         popup.menuInflater.inflate(menuRes, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.rename_category -> {
-                    val dialog = RenameCategoryDialogFragment()
+                    val dialog = RenameCategoryDialogFragment.newInstance(categoryId, currentName)
                     if (parentFragmentManager.findFragmentByTag("RENAME_CATEGORY_DIALOG") == null) {
                         dialog.show(parentFragmentManager, "RENAME_CATEGORY_DIALOG")
                     }

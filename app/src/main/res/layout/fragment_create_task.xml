@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLength="30"
-            android:hint="@string/title"
+            android:hint="@string/title_required"
             android:textColorHint="@color/dark_gray" />
     </com.google.android.material.textfield.TextInputLayout>
 
