@@ -30,7 +30,7 @@ class CreateSubtaskDialogFragment : DialogFragment() {
                 positiveButton.setOnClickListener {
                     val titleInputLayout =
                         dialogView.findViewById<TextInputLayout>(R.id.title_input)
-                    val title = titleInputLayout.editText?.text.toString() ?: ""
+                    val title = titleInputLayout.editText?.text.toString()
                     if (validateTitle(title, titleInputLayout)) {
                         // TODO: Add subtask to database
                         dialog.dismiss()
