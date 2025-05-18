@@ -131,8 +131,6 @@ class CreateTaskFragment : Fragment() {
                 dateEpochDay = epochDay,
                 timeNanoOfDay = timeNanoOfDay,
                 categoryId = 1, // My Tasks
-                isDone = false,
-                isSelected = false,
                 isStarred = false
             )
 
@@ -152,6 +150,7 @@ class CreateTaskFragment : Fragment() {
 
     private fun initToolbar() {
         val toolbar: MaterialToolbar = view?.findViewById(R.id.header_toolbar)!!
+        toolbar.title = getString(R.string.new_task)
         toolbar.setNavigationOnClickListener { _ ->
             parentFragmentManager.popBackStack()
         }

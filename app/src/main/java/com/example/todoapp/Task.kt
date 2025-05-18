@@ -19,7 +19,5 @@ data class Task (
     val dateEpochDay: Long,
     val timeNanoOfDay: Long?, // null if all-day
     val categoryId: Int?,
-    val isDone: Boolean = false,
-    val isSelected: Boolean = false,
     val isStarred: Boolean = false
 )

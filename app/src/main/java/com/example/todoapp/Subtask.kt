@@ -21,5 +21,4 @@ data class Subtask(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val taskId: Int,
     val title: String,
-    val isSelected: Boolean
 )

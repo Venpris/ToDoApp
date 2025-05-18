@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.annotation.MenuRes
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -68,6 +69,12 @@ class TaskListFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         taskAdapter = TaskRecyclerViewAdapter(emptyList(), taskDao)
         taskRv.adapter = taskAdapter
+
+        // Set up custom item animations
+        val itemAnimator = DefaultItemAnimator()
+        itemAnimator.addDuration = 500
+        itemAnimator.removeDuration = 500
+        taskRv.itemAnimator = itemAnimator
 
         taskDao.getAll().observe(viewLifecycleOwner) { list ->
             taskAdapter.updateData(list)

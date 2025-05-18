@@ -10,16 +10,13 @@ import androidx.room.Update
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM tasks WHERE isDone = 0")
+    @Query("SELECT * FROM tasks")
     fun getAll(): LiveData<List<Task>>
 
-    @Query("SELECT * FROM tasks WHERE categoryId = :categoryId AND isDone = 0")
+    @Query("SELECT * FROM tasks WHERE categoryId = :categoryId")
     fun filterTasksByCategory(categoryId: Int): LiveData<List<Task>>
 
-    @Query("SELECT * FROM tasks WHERE isDone = 1")
-    fun getDoneTasks(): LiveData<List<Task>>
-
-    @Query("SELECT * FROM tasks WHERE isStarred = 1 AND isDone = 0")
+    @Query("SELECT * FROM tasks WHERE isStarred = 1")
     fun getStarredTasks(): LiveData<List<Task>>
 
     @Query("SELECT * FROM subtasks WHERE taskId = :taskId")
