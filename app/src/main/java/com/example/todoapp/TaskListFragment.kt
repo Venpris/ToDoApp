@@ -141,9 +141,11 @@ class TaskListFragment : Fragment() {
             categories.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     when (val categoryId = tab.tag as Int) {
+                        // Starred
                         0 -> taskDao.getStarredTasks().observe(viewLifecycleOwner) { tasks ->
                             taskAdapter.updateData(tasks)
                         }
+
                         // New Category
                         -1 -> {
                             findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
@@ -151,6 +153,11 @@ class TaskListFragment : Fragment() {
                             if (categories.tabCount >= 2) {
                                 categories.getTabAt(1)?.select()
                             }
+                        }
+
+                        // All
+                        1 -> taskDao.getAll().observe(viewLifecycleOwner) { tasks ->
+                            taskAdapter.updateData(tasks)
                         }
 
                         else -> taskDao.filterTasksByCategory(categoryId)
@@ -205,7 +212,9 @@ class TaskListFragment : Fragment() {
         })
 
         view.findViewById<FloatingActionButton>(R.id.btn_add).setOnClickListener {
-            findNavController().navigate(R.id.action_taskListFragment_to_createTaskFragment)
+            val categoryId = categories.getTabAt(categories.selectedTabPosition)?.tag as Int ?: 1
+            val action = TaskListFragmentDirections.actionTaskListFragmentToCreateTaskFragment(categoryId)
+            findNavController().navigate(action)
         }
     }
 

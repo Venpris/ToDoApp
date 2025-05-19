@@ -21,7 +21,12 @@
         android:id="@+id/createTaskFragment"
         android:name="com.example.todoapp.CreateTaskFragment"
         android:label="fragment_create_task"
-        tools:layout="@layout/fragment_create_task" />
+        tools:layout="@layout/fragment_create_task" >
+        <argument
+            android:name="categoryId"
+            app:argType="integer"
+            android:defaultValue="1" />
+    </fragment>
     <fragment
         android:id="@+id/createCategoryFragment"
         android:name="com.example.todoapp.CreateCategoryFragment"

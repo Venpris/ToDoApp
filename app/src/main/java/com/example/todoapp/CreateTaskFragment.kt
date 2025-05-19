@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter
 class CreateTaskFragment : Fragment() {
     private lateinit var subtaskRv: RecyclerView
     private lateinit var subtaskAdapter: SubtaskRecyclerViewAdapter
+    val args: CreateTaskFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -130,7 +132,7 @@ class CreateTaskFragment : Fragment() {
                 description = description,
                 dateEpochDay = epochDay,
                 timeNanoOfDay = timeNanoOfDay,
-                categoryId = 1, // My Tasks
+                categoryId = args.categoryId,
                 isStarred = false
             )
 
