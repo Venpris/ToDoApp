@@ -10,6 +10,7 @@ import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
+import android.view.MotionEvent
 import androidx.annotation.MenuRes
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -33,7 +34,7 @@ class TaskListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_task_list, container, false)
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -70,7 +71,6 @@ class TaskListFragment : Fragment() {
         taskAdapter = TaskRecyclerViewAdapter(emptyList(), taskDao)
         taskRv.adapter = taskAdapter
 
-        // Set up custom item animations
         val itemAnimator = DefaultItemAnimator()
         itemAnimator.addDuration = 500
         itemAnimator.removeDuration = 500
@@ -112,24 +112,29 @@ class TaskListFragment : Fragment() {
             tabIcon.setImageResource(R.drawable.ic_material_add)
             tabText.text = getString(R.string.new_category)
 
-            tabView.setOnClickListener {
-                findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
-            }
-
             newListTab.customView = tabView
             categories.addTab(newListTab)
 
-            var tabWasSelected = false
+            for (i in 0 until categories.tabCount) {
+                val tab = categories.getTabAt(i)
+                if (tab?.tag as? Int == -1) {
+                    val tabView = tab.view
 
-            selectCategoryId?.let { categoryId ->
-                for (i in 0 until categories.tabCount) {
-                    val tab = categories.getTabAt(i)
-                    if (tab?.tag as? Int == categoryId) {
-                        tab.select()
-                        selectCategoryId = null
-                        tabWasSelected = true
-                        return@let
+                    tabView.setOnTouchListener { _, event ->
+                        if (event.action == MotionEvent.ACTION_UP) {
+                            findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
+
+                            if (categories.tabCount >= 2) {
+                                val previousTab = categories.selectedTabPosition
+                                tabView.post {
+                                    categories.getTabAt(previousTab)?.select()
+                                }
+                            }
+                            return@setOnTouchListener true
+                        }
+                        false
                     }
+                    break
                 }
             }
 
@@ -138,6 +143,14 @@ class TaskListFragment : Fragment() {
                     when (val categoryId = tab.tag as Int) {
                         0 -> taskDao.getStarredTasks().observe(viewLifecycleOwner) { tasks ->
                             taskAdapter.updateData(tasks)
+                        }
+                        // New Category
+                        -1 -> {
+                            findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
+
+                            if (categories.tabCount >= 2) {
+                                categories.getTabAt(1)?.select()
+                            }
                         }
 
                         else -> taskDao.filterTasksByCategory(categoryId)
@@ -153,6 +166,20 @@ class TaskListFragment : Fragment() {
                 override fun onTabReselected(tab: TabLayout.Tab) {
                 }
             })
+
+            var tabWasSelected = false
+
+            selectCategoryId?.let { categoryId ->
+                for (i in 0 until categories.tabCount) {
+                    val tab = categories.getTabAt(i)
+                    if (tab?.tag as? Int == categoryId) {
+                        tab.select()
+                        selectCategoryId = null
+                        tabWasSelected = true
+                        return@let
+                    }
+                }
+            }
 
             if (categories.tabCount >= 2) {
                 if (!tabWasSelected) {
