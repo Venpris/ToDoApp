@@ -12,6 +12,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import android.view.MotionEvent
 import androidx.annotation.MenuRes
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -26,6 +27,7 @@ class TaskListFragment : Fragment() {
     private lateinit var taskRv: RecyclerView
     private lateinit var taskAdapter: TaskRecyclerViewAdapter
     private var selectCategoryId: Int? = null
+    private var currentTaskLiveData: LiveData<List<Task>>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,10 +77,6 @@ class TaskListFragment : Fragment() {
         itemAnimator.addDuration = 500
         itemAnimator.removeDuration = 500
         taskRv.itemAnimator = itemAnimator
-
-        taskDao.getAll().observe(viewLifecycleOwner) { list ->
-            taskAdapter.updateData(list)
-        }
 
         categoryDao.getAll().observe(viewLifecycleOwner) { categoryList ->
             categories.removeAllTabs()
@@ -140,30 +138,28 @@ class TaskListFragment : Fragment() {
 
             categories.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
-                    when (val categoryId = tab.tag as Int) {
+                    val categoryId = tab.tag as Int
+                    // remove previous observer
+                    currentTaskLiveData?.removeObservers(viewLifecycleOwner)
+                    // select source based on tab
+                    currentTaskLiveData = when (categoryId) {
                         // Starred
-                        0 -> taskDao.getStarredTasks().observe(viewLifecycleOwner) { tasks ->
-                            taskAdapter.updateData(tasks)
-                        }
-
+                        0 -> taskDao.getStarredTasks()
                         // New Category
-                        -1 -> {
-                            findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
-
-                            if (categories.tabCount >= 2) {
-                                categories.getTabAt(1)?.select()
-                            }
-                        }
-
+                        -1 -> null
                         // All
-                        1 -> taskDao.getAll().observe(viewLifecycleOwner) { tasks ->
-                            taskAdapter.updateData(tasks)
-                        }
-
+                        1 -> taskDao.getAll()
                         else -> taskDao.filterTasksByCategory(categoryId)
-                            .observe(viewLifecycleOwner) { tasks ->
-                                taskAdapter.updateData(tasks)
-                            }
+                    }
+                    // Observe if not navigation tab
+                    currentTaskLiveData?.observe(viewLifecycleOwner) { tasks ->
+                        taskAdapter.updateData(tasks)
+                    }
+
+                    // handle navigation tab
+                    if (categoryId == -1) {
+                        findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
+                        if (categories.tabCount >= 2) categories.getTabAt(1)?.select()
                     }
                 }
 
@@ -253,3 +249,4 @@ class TaskListFragment : Fragment() {
         popup.show()
     }
 }
+

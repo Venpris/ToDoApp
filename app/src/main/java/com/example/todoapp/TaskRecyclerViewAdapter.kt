@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TaskRecyclerViewAdapter(
     private var taskList: List<Task>,
@@ -77,16 +78,13 @@ class TaskRecyclerViewAdapter(
         }
 
         holder.icon.setOnClickListener {
+            holder.icon.isEnabled = false
             val updatedTask = task.copy(isStarred = !task.isStarred)
-
             CoroutineScope(Dispatchers.IO).launch {
                 taskDao.updateTasks(updatedTask)
-            }
-
-            if (!task.isStarred) {
-                holder.icon.setImageResource(R.drawable.ic_star_filled)
-            } else {
-                holder.icon.setImageResource(R.drawable.ic_star_empty)
+                withContext(Dispatchers.Main) {
+                    holder.icon.isEnabled = true
+                }
             }
         }
     }
