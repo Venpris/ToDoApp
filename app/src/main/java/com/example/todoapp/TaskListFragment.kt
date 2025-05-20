@@ -73,11 +73,6 @@ class TaskListFragment : Fragment() {
         taskAdapter = TaskRecyclerViewAdapter(emptyList(), taskDao)
         taskRv.adapter = taskAdapter
 
-        val itemAnimator = DefaultItemAnimator()
-        itemAnimator.addDuration = 500
-        itemAnimator.removeDuration = 500
-        taskRv.itemAnimator = itemAnimator
-
         categoryDao.getAll().observe(viewLifecycleOwner) { categoryList ->
             categories.removeAllTabs()
             categories.clearOnTabSelectedListeners()
@@ -139,9 +134,7 @@ class TaskListFragment : Fragment() {
             categories.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     val categoryId = tab.tag as Int
-                    // remove previous observer
                     currentTaskLiveData?.removeObservers(viewLifecycleOwner)
-                    // select source based on tab
                     currentTaskLiveData = when (categoryId) {
                         // Starred
                         0 -> taskDao.getStarredTasks()
@@ -151,12 +144,11 @@ class TaskListFragment : Fragment() {
                         1 -> taskDao.getAll()
                         else -> taskDao.filterTasksByCategory(categoryId)
                     }
-                    // Observe if not navigation tab
+
                     currentTaskLiveData?.observe(viewLifecycleOwner) { tasks ->
                         taskAdapter.updateData(tasks)
                     }
 
-                    // handle navigation tab
                     if (categoryId == -1) {
                         findNavController().navigate(R.id.action_taskListFragment_to_createCategoryFragment)
                         if (categories.tabCount >= 2) categories.getTabAt(1)?.select()

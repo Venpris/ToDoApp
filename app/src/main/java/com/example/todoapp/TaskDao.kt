@@ -10,13 +10,22 @@ import androidx.room.Update
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM tasks")
+    @Query("SELECT * FROM tasks " +
+            "ORDER BY dateEpochDay ASC, " +
+            "timeNanoOfDay is NULL, " +
+            "timeNanoOfDay ASC")
     fun getAll(): LiveData<List<Task>>
 
-    @Query("SELECT * FROM tasks WHERE categoryId = :categoryId")
+    @Query("SELECT * FROM tasks WHERE categoryId = :categoryId " +
+            "ORDER BY dateEpochDay ASC, " +
+            "timeNanoOfDay is NULL, " +
+            "timeNanoOfDay ASC")
     fun filterTasksByCategory(categoryId: Int): LiveData<List<Task>>
 
-    @Query("SELECT * FROM tasks WHERE isStarred = 1")
+    @Query("SELECT * FROM tasks WHERE isStarred = 1 " +
+            "ORDER BY dateEpochDay ASC, " +
+            "timeNanoOfDay is NULL, " +
+            "timeNanoOfDay ASC")
     fun getStarredTasks(): LiveData<List<Task>>
 
     @Query("SELECT * FROM subtasks WHERE taskId = :taskId")
