@@ -10,6 +10,17 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.material.textfield.TextInputLayout
 
 class CreateSubtaskDialogFragment : DialogFragment() {
+
+    interface OnSubtaskCreatedListener {
+        fun onSubtaskCreated(title: String)
+    }
+
+    private var listener: OnSubtaskCreatedListener? = null
+
+    fun setOnSubtaskCreatedListener(listener: OnSubtaskCreatedListener) {
+        this.listener = listener
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = MaterialAlertDialogBuilder(it)
@@ -32,7 +43,7 @@ class CreateSubtaskDialogFragment : DialogFragment() {
                         dialogView.findViewById<TextInputLayout>(R.id.title_input)
                     val title = titleInputLayout.editText?.text.toString()
                     if (validateTitle(title, titleInputLayout)) {
-                        // TODO: Add subtask to database
+                        listener?.onSubtaskCreated(title)
                         dialog.dismiss()
                     }
                 }

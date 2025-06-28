@@ -35,16 +35,25 @@ interface TaskDao {
     fun getTaskById(taskId: Int): LiveData<Task>
 
     @Insert
-    fun insertAll(vararg tasks: Task)
+    fun insertAll(vararg tasks: Task): List<Long>
 
     @Insert
-    fun insertSubtasks(vararg subtasks: Subtask)
+    fun insertSubtasks(vararg subtasks: Subtask): List<Long>
+
+    @Insert
+    fun insertSubtask(subtask: Subtask): Long
 
     @Delete
     fun deleteTasks(vararg tasks: Task)
 
+    @Delete
+    fun deleteSubtask(subtask: Subtask)
+
     @Update
     fun updateTasks(vararg tasks: Task)
+
+    @Update
+    fun updateSubtask(subtask: Subtask)
 
     @Transaction
     @Query("SELECT * FROM tasks")

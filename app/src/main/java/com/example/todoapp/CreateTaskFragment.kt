@@ -19,9 +19,10 @@ import java.time.ZoneId
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-class CreateTaskFragment : Fragment() {
+class CreateTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreatedListener {
     private lateinit var subtaskRv: RecyclerView
     private lateinit var subtaskAdapter: SubtaskRecyclerViewAdapter
+    private val pendingSubtasks = mutableListOf<Subtask>()
     val args: CreateTaskFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -39,8 +40,13 @@ class CreateTaskFragment : Fragment() {
         val db = AppDatabase.getDatabase(requireContext())
         val taskDao = db.taskDao()
 
+        subtaskAdapter = SubtaskRecyclerViewAdapter(
+            mutableListOf(),
+            taskDao
+        ) { deletedSubtask ->
+            pendingSubtasks.removeAll { it.title == deletedSubtask.title }
+        }
         subtaskRv = view.findViewById(R.id.rv_subtasks)
-        subtaskAdapter = SubtaskRecyclerViewAdapter(emptyList())
         subtaskRv.adapter = subtaskAdapter
         subtaskRv.layoutManager = LinearLayoutManager(requireContext())
 
@@ -98,13 +104,10 @@ class CreateTaskFragment : Fragment() {
 
         view.findViewById<Button>(R.id.btn_add_subtask).setOnClickListener {
             val dialog = CreateSubtaskDialogFragment()
+            dialog.setOnSubtaskCreatedListener(this)
             if (parentFragmentManager.findFragmentByTag("CREATE_SUBTASK_DIALOG") == null) {
                 dialog.show(parentFragmentManager, "CREATE_SUBTASK_DIALOG")
             }
-        }
-
-        taskDao.getSubtasksForTask(1).observe(viewLifecycleOwner) { list ->
-            subtaskAdapter.updateData(list)
         }
 
         view.findViewById<Button>(R.id.btn_submit).setOnClickListener {
@@ -137,7 +140,16 @@ class CreateTaskFragment : Fragment() {
             )
 
             Thread {
-                taskDao.insertAll(newTask)
+                val taskIds = taskDao.insertAll(newTask)
+                val taskId = taskIds.first().toInt()
+
+                val subtasksToInsert = pendingSubtasks.map { subtask ->
+                    subtask.copy(taskId = taskId)
+                }
+                if (subtasksToInsert.isNotEmpty()) {
+                    taskDao.insertSubtasks(*subtasksToInsert.toTypedArray())
+                }
+
                 activity?.runOnUiThread {
                     Toast.makeText(
                         requireContext(),
@@ -148,6 +160,17 @@ class CreateTaskFragment : Fragment() {
                 }
             }.start()
         }
+    }
+
+    override fun onSubtaskCreated(title: String) {
+        // Create a temporary subtask (ID will be set when task is saved)
+        val newSubtask = Subtask(
+            id = 0, // temporary ID
+            taskId = 0, // will be set when task is created
+            title = title
+        )
+        pendingSubtasks.add(newSubtask)
+        subtaskAdapter.addSubtask(newSubtask)
     }
 
     private fun initToolbar() {
