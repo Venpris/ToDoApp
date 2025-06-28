@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_taskListFragment_to_createCategoryFragment"
             app:destination="@id/createCategoryFragment" />
+        <action
+            android:id="@+id/action_taskListFragment_to_editTaskFragment"
+            app:destination="@id/editTaskFragment" />
     </fragment>
     <fragment
         android:id="@+id/createTaskFragment"
@@ -32,4 +35,13 @@
         android:name="com.example.todoapp.CreateCategoryFragment"
         android:label="fragment_create_category"
         tools:layout="@layout/fragment_create_category" />
+    <fragment
+        android:id="@+id/editTaskFragment"
+        android:name="com.example.todoapp.EditTaskFragment"
+        android:label="fragment_edit_task"
+        tools:layout="@layout/fragment_edit_task">
+        <argument
+            android:name="taskId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

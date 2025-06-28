@@ -70,7 +70,10 @@ class TaskListFragment : Fragment() {
         taskRv = view.findViewById(R.id.task_recycler_view)
         taskRv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        taskAdapter = TaskRecyclerViewAdapter(emptyList(), taskDao)
+        taskAdapter = TaskRecyclerViewAdapter(emptyList(), taskDao) { task ->
+            val action = TaskListFragmentDirections.actionTaskListFragmentToEditTaskFragment(task.id)
+            findNavController().navigate(action)
+        }
         taskRv.adapter = taskAdapter
 
         categoryDao.getAll().observe(viewLifecycleOwner) { categoryList ->
@@ -241,4 +244,3 @@ class TaskListFragment : Fragment() {
         popup.show()
     }
 }
-

@@ -13,11 +13,11 @@ import androidx.room.PrimaryKey
     )
 ])
 data class Task (
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val title: String,
-    val description: String?,
-    val dateEpochDay: Long,
-    val timeNanoOfDay: Long?, // null if all-day
+    @PrimaryKey(autoGenerate = true) var id: Int,
+    var title: String,
+    var description: String?,
+    var dateEpochDay: Long,
+    var timeNanoOfDay: Long?, // null if all-day
     val categoryId: Int?,
     val isStarred: Boolean = false
 )

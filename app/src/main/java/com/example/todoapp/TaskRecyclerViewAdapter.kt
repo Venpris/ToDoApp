@@ -16,7 +16,8 @@ import kotlinx.coroutines.withContext
 
 class TaskRecyclerViewAdapter(
     private var taskList: List<Task>,
-    private val taskDao: TaskDao
+    private val taskDao: TaskDao,
+    private val onTaskClick: (Task) -> Unit
 ) : RecyclerView.Adapter<TaskRecyclerViewAdapter.TaskViewHolder>() {
 
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -86,6 +87,10 @@ class TaskRecyclerViewAdapter(
                     holder.icon.isEnabled = true
                 }
             }
+        }
+
+        holder.itemView.setOnClickListener {
+            onTaskClick(task)
         }
     }
 
