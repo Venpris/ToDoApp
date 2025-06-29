@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -45,6 +46,7 @@ class CreateTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCrea
             taskDao
         ) { deletedSubtask ->
             pendingSubtasks.removeAll { it.title == deletedSubtask.title }
+            updateButtonMargins()
         }
         subtaskRv = view.findViewById(R.id.rv_subtasks)
         subtaskRv.adapter = subtaskAdapter
@@ -171,6 +173,29 @@ class CreateTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCrea
         )
         pendingSubtasks.add(newSubtask)
         subtaskAdapter.addSubtask(newSubtask)
+        updateButtonMargins()
+    }
+
+    private fun updateButtonMargins() {
+        val addSubtaskButton = view?.findViewById<Button>(R.id.btn_add_subtask)
+        val submitButton = view?.findViewById<Button>(R.id.btn_submit)
+
+        if (addSubtaskButton != null && submitButton != null) {
+            val isRecyclerViewVisible = subtaskAdapter.itemCount > 0
+            val marginTopDp = if (isRecyclerViewVisible) 12 else 24
+            val marginTopPx = (marginTopDp * resources.displayMetrics.density).toInt()
+            val marginBottomPx = (24 * resources.displayMetrics.density).toInt()
+
+            val addSubtaskParams = addSubtaskButton.layoutParams as ConstraintLayout.LayoutParams
+            addSubtaskParams.topMargin = marginTopPx
+            addSubtaskParams.bottomMargin = marginBottomPx
+            addSubtaskButton.layoutParams = addSubtaskParams
+
+            val submitParams = submitButton.layoutParams as ConstraintLayout.LayoutParams
+            submitParams.topMargin = marginTopPx
+            submitParams.bottomMargin = marginBottomPx
+            submitButton.layoutParams = submitParams
+        }
     }
 
     private fun initToolbar() {

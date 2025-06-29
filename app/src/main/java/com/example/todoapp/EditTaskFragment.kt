@@ -18,6 +18,7 @@ import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import androidx.constraintlayout.widget.ConstraintLayout
 
 class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreatedListener {
     private lateinit var subtaskRv: RecyclerView
@@ -57,13 +58,16 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
         subtaskAdapter = SubtaskRecyclerViewAdapter(
             mutableListOf(),
             taskDao
-        )
+        ) { deletedSubtask ->
+            updateButtonMargins()
+        }
         subtaskRv = view.findViewById(R.id.rv_subtasks)
         subtaskRv.adapter = subtaskAdapter
         subtaskRv.layoutManager = LinearLayoutManager(requireContext())
 
         taskDao.getSubtasksForTask(args.taskId).observe(viewLifecycleOwner) { subtasks ->
             subtaskAdapter.updateData(subtasks)
+            updateButtonMargins()
         }
 
         taskDao.getTaskById(args.taskId).observe(viewLifecycleOwner) { task ->
@@ -197,6 +201,29 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
         Thread {
             taskDao.insertSubtask(newSubtask)
         }.start()
+        updateButtonMargins()
+    }
+
+    private fun updateButtonMargins() {
+        val addSubtaskButton = view?.findViewById<Button>(R.id.btn_add_subtask)
+        val submitButton = view?.findViewById<Button>(R.id.btn_submit)
+
+        if (addSubtaskButton != null && submitButton != null) {
+            val isRecyclerViewVisible = subtaskAdapter.itemCount > 0
+            val marginTopDp = if (isRecyclerViewVisible) 12 else 24
+            val marginTopPx = (marginTopDp * resources.displayMetrics.density).toInt()
+            val marginBottomPx = (24 * resources.displayMetrics.density).toInt()
+
+            val addSubtaskParams = addSubtaskButton.layoutParams as ConstraintLayout.LayoutParams
+            addSubtaskParams.topMargin = marginTopPx
+            addSubtaskParams.bottomMargin = marginBottomPx
+            addSubtaskButton.layoutParams = addSubtaskParams
+
+            val submitParams = submitButton.layoutParams as ConstraintLayout.LayoutParams
+            submitParams.topMargin = marginTopPx
+            submitParams.bottomMargin = marginBottomPx
+            submitButton.layoutParams = submitParams
+        }
     }
 
     private fun initToolbar() {
