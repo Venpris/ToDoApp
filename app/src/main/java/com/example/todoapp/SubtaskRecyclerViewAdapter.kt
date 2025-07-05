@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 
 class SubtaskRecyclerViewAdapter(
     private var subtaskList: MutableList<Subtask>,
-    private val taskDao: TaskDao,
     private val onSubtaskDeleted: ((Subtask) -> Unit)? = null
 ) :
     RecyclerView.Adapter<SubtaskRecyclerViewAdapter.SubtaskViewHolder>() {
@@ -58,12 +57,6 @@ class SubtaskRecyclerViewAdapter(
                         val removedSubtask = subtaskList.removeAt(currentPosition)
                         notifyItemRemoved(currentPosition)
                         notifyItemRangeChanged(currentPosition, subtaskList.size)
-
-                        if (removedSubtask.id > 0) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                taskDao.deleteSubtask(removedSubtask)
-                            }
-                        }
 
                         onSubtaskDeleted?.invoke(removedSubtask)
                     }

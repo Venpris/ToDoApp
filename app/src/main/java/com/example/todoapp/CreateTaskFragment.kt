@@ -42,12 +42,12 @@ class CreateTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCrea
         val taskDao = db.taskDao()
 
         subtaskAdapter = SubtaskRecyclerViewAdapter(
-            mutableListOf(),
-            taskDao
+            mutableListOf()
         ) { deletedSubtask ->
             pendingSubtasks.removeAll { it.title == deletedSubtask.title }
             updateButtonMargins()
         }
+
         subtaskRv = view.findViewById(R.id.rv_subtasks)
         subtaskRv.adapter = subtaskAdapter
         subtaskRv.layoutManager = LinearLayoutManager(requireContext())

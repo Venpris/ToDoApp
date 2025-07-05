@@ -26,6 +26,11 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
     private lateinit var taskDao: TaskDao
     val args: EditTaskFragmentArgs by navArgs()
 
+    private var originalSubtasks: List<Subtask> = emptyList()
+    private var currentSubtasks: MutableList<Subtask> = mutableListOf()
+    private var deletedSubtasks: MutableList<Subtask> = mutableListOf()
+    private var newSubtasks: MutableList<Subtask> = mutableListOf()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,9 +61,13 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
         var selectedMinute: Int? = null
 
         subtaskAdapter = SubtaskRecyclerViewAdapter(
-            mutableListOf(),
-            taskDao
+            currentSubtasks
         ) { deletedSubtask ->
+            if (deletedSubtask.id > 0) {
+                deletedSubtasks.add(deletedSubtask)
+            } else {
+                newSubtasks.removeAll { it.title == deletedSubtask.title }
+            }
             updateButtonMargins()
         }
         subtaskRv = view.findViewById(R.id.rv_subtasks)
@@ -66,7 +75,12 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
         subtaskRv.layoutManager = LinearLayoutManager(requireContext())
 
         taskDao.getSubtasksForTask(args.taskId).observe(viewLifecycleOwner) { subtasks ->
-            subtaskAdapter.updateData(subtasks)
+            originalSubtasks = subtasks
+            val oldSize = currentSubtasks.size
+            currentSubtasks.clear()
+            subtaskAdapter.notifyItemRangeRemoved(0, oldSize)
+            currentSubtasks.addAll(subtasks)
+            subtaskAdapter.notifyItemRangeInserted(0, subtasks.size)
             updateButtonMargins()
         }
 
@@ -179,6 +193,17 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
 
             Thread {
                 taskDao.updateTasks(updatedTask)
+
+                deletedSubtasks.forEach { subtask ->
+                    if (subtask.id > 0) {
+                        taskDao.deleteSubtask(subtask)
+                    }
+                }
+
+                newSubtasks.forEach { subtask ->
+                    taskDao.insertSubtask(subtask)
+                }
+
                 activity?.runOnUiThread {
                     Toast.makeText(
                         requireContext(),
@@ -198,9 +223,9 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
             title = title
         )
 
-        Thread {
-            taskDao.insertSubtask(newSubtask)
-        }.start()
+        newSubtasks.add(newSubtask)
+        currentSubtasks.add(newSubtask)
+        subtaskAdapter.notifyItemInserted(currentSubtasks.size - 1)
         updateButtonMargins()
     }
 
