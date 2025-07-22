@@ -10,13 +10,11 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class SubtaskRecyclerViewAdapter(
     private var subtaskList: MutableList<Subtask>,
-    private val onSubtaskDeleted: ((Subtask) -> Unit)? = null
+    private val onSubtaskDeleted: ((Subtask) -> Unit)? = null,
+    private val onSubtaskEdit: ((Subtask) -> Unit)? = null
 ) :
     RecyclerView.Adapter<SubtaskRecyclerViewAdapter.SubtaskViewHolder>() {
 
@@ -42,6 +40,10 @@ class SubtaskRecyclerViewAdapter(
         holder.icon.isVisible = false
         holder.text.text = subtask.title
         holder.radioButton.isChecked = false
+
+        holder.itemView.setOnClickListener {
+            onSubtaskEdit?.invoke(subtask)
+        }
 
         holder.radioButton.setOnClickListener {
             val fadeOut = AlphaAnimation(1.0f, 0.0f)

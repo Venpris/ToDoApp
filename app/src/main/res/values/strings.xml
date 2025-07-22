@@ -23,4 +23,5 @@
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
     <string name="rename_category">Rename Category</string>
+    <string name="edit_subtask">Edit Subtask</string>
 </resources>

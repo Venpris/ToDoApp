@@ -30,6 +30,7 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
     private var currentSubtasks: MutableList<Subtask> = mutableListOf()
     private var deletedSubtasks: MutableList<Subtask> = mutableListOf()
     private var newSubtasks: MutableList<Subtask> = mutableListOf()
+    private var modifiedSubtasks: MutableList<Subtask> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,15 +62,40 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
         var selectedMinute: Int? = null
 
         subtaskAdapter = SubtaskRecyclerViewAdapter(
-            currentSubtasks
-        ) { deletedSubtask ->
-            if (deletedSubtask.id > 0) {
-                deletedSubtasks.add(deletedSubtask)
-            } else {
-                newSubtasks.removeAll { it.title == deletedSubtask.title }
+            currentSubtasks,
+            onSubtaskDeleted = { deletedSubtask ->
+                if (deletedSubtask.id > 0) {
+                    deletedSubtasks.add(deletedSubtask)
+                } else {
+                    newSubtasks.removeAll { it.title == deletedSubtask.title }
+                }
+                updateButtonMargins()
+            },
+            onSubtaskEdit = { subtask ->
+                val editDialog = EditSubtaskDialogFragment.newInstance(subtask.id, subtask.title)
+                editDialog.setOnSubtaskEditedListener(object : EditSubtaskDialogFragment.OnSubtaskEditedListener {
+                    override fun onSubtaskEdited(subtaskId: Int, newTitle: String) {
+                        val index = currentSubtasks.indexOfFirst { it.id == subtaskId }
+                        if (index != -1) {
+                            val updatedSubtask = currentSubtasks[index].copy(title = newTitle)
+                            currentSubtasks[index] = updatedSubtask
+                            subtaskAdapter.notifyItemChanged(index)
+
+                            if (subtaskId > 0) {
+                                modifiedSubtasks.removeAll { it.id == subtaskId }
+                                modifiedSubtasks.add(updatedSubtask)
+                            } else {
+                                val newIndex = newSubtasks.indexOfFirst { it.title == subtask.title }
+                                if (newIndex != -1) {
+                                    newSubtasks[newIndex] = updatedSubtask
+                                }
+                            }
+                        }
+                    }
+                })
+                editDialog.show(parentFragmentManager, "EditSubtaskDialog")
             }
-            updateButtonMargins()
-        }
+        )
         subtaskRv = view.findViewById(R.id.rv_subtasks)
         subtaskRv.adapter = subtaskAdapter
         subtaskRv.layoutManager = LinearLayoutManager(requireContext())
@@ -204,6 +230,10 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
                     taskDao.insertSubtask(subtask)
                 }
 
+                modifiedSubtasks.forEach { subtask ->
+                    taskDao.updateSubtask(subtask)
+                }
+
                 activity?.runOnUiThread {
                     Toast.makeText(
                         requireContext(),
@@ -292,10 +322,7 @@ class EditTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCreate
     private fun validateDate(selectedDateInMillis: Long?, dateButton: Button): Boolean {
         if (selectedDateInMillis == null) {
             dateButton.setTextColor(
-                resources.getColor(
-                    com.google.android.material.R.color.design_default_color_error,
-                    null
-                )
+                resources.getColor(android.R.color.holo_red_dark, null)
             )
             return false
         }

@@ -42,11 +42,32 @@ class CreateTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCrea
         val taskDao = db.taskDao()
 
         subtaskAdapter = SubtaskRecyclerViewAdapter(
-            mutableListOf()
-        ) { deletedSubtask ->
-            pendingSubtasks.removeAll { it.title == deletedSubtask.title }
-            updateButtonMargins()
-        }
+            mutableListOf(),
+            onSubtaskDeleted = { deletedSubtask ->
+                pendingSubtasks.removeAll { it.title == deletedSubtask.title }
+                updateButtonMargins()
+            },
+            onSubtaskEdit = { subtask ->
+                val editDialog = EditSubtaskDialogFragment.newInstance(subtask.id, subtask.title)
+                editDialog.setOnSubtaskEditedListener(object : EditSubtaskDialogFragment.OnSubtaskEditedListener {
+                    override fun onSubtaskEdited(subtaskId: Int, newTitle: String) {
+                        val adapterSubtasks = subtaskAdapter.getSubtasks().toMutableList()
+                        val index = adapterSubtasks.indexOfFirst { it.id == subtaskId }
+                        if (index != -1) {
+                            val updatedSubtask = adapterSubtasks[index].copy(title = newTitle)
+                            adapterSubtasks[index] = updatedSubtask
+                            subtaskAdapter.updateData(adapterSubtasks)
+
+                            val pendingIndex = pendingSubtasks.indexOfFirst { it.id == subtaskId }
+                            if (pendingIndex != -1) {
+                                pendingSubtasks[pendingIndex] = updatedSubtask
+                            }
+                        }
+                    }
+                })
+                editDialog.show(parentFragmentManager, "EditSubtaskDialog")
+            }
+        )
 
         subtaskRv = view.findViewById(R.id.rv_subtasks)
         subtaskRv.adapter = subtaskAdapter
@@ -239,10 +260,7 @@ class CreateTaskFragment : Fragment(), CreateSubtaskDialogFragment.OnSubtaskCrea
     private fun validateDate(selectedDateInMillis: Long?, dateButton: Button): Boolean {
         if (selectedDateInMillis == null) {
             dateButton.setTextColor(
-                resources.getColor(
-                    com.google.android.material.R.color.design_default_color_error,
-                    null
-                )
+                resources.getColor(android.R.color.holo_red_dark, null)
             )
             return false
         }
