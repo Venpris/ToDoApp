@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.view.isEmpty
 
 class TaskRecyclerViewAdapter(
     private var taskList: List<Task>,
@@ -26,6 +27,7 @@ class TaskRecyclerViewAdapter(
         val radioButton: RadioButton = itemView.findViewById(R.id.task_radio_button)
         val text: TextView = itemView.findViewById(R.id.task_title)
         val subtasksContainer: LinearLayout = itemView.findViewById(R.id.subtasks_container)
+        var currentTaskId: Int? = null
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -50,57 +52,61 @@ class TaskRecyclerViewAdapter(
             holder.icon.setImageResource(R.drawable.ic_star_empty)
         }
 
-        holder.subtasksContainer.removeAllViews()
-        holder.subtasksContainer.visibility = View.GONE
+        if (holder.currentTaskId != task.id) {
+            holder.subtasksContainer.removeAllViews()
+            holder.subtasksContainer.visibility = View.GONE
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val subtasks = taskDao.getSubtasksForTaskSync(task.id)
+            CoroutineScope(Dispatchers.IO).launch {
+                val subtasks = taskDao.getSubtasksForTaskSync(task.id)
 
-            withContext(Dispatchers.Main) {
-                if (subtasks.isNotEmpty()) {
-                    holder.subtasksContainer.visibility = View.VISIBLE
+                withContext(Dispatchers.Main) {
+                    if (subtasks.isNotEmpty()) {
+                        holder.subtasksContainer.visibility = View.VISIBLE
 
-                    for (subtask in subtasks) {
-                        val subtaskView = LayoutInflater.from(holder.itemView.context)
-                            .inflate(R.layout.subtask_item, holder.subtasksContainer, false)
+                        for (subtask in subtasks) {
+                            val subtaskView = LayoutInflater.from(holder.itemView.context)
+                                .inflate(R.layout.subtask_item, holder.subtasksContainer, false)
 
-                        val subtaskTitle = subtaskView.findViewById<TextView>(R.id.subtask_title)
-                        val subtaskRadioButton = subtaskView.findViewById<RadioButton>(R.id.subtask_radio_button)
+                            val subtaskTitle = subtaskView.findViewById<TextView>(R.id.subtask_title)
+                            val subtaskRadioButton = subtaskView.findViewById<RadioButton>(R.id.subtask_radio_button)
 
-                        subtaskTitle.text = subtask.title
-                        subtaskRadioButton.isChecked = false
+                            subtaskTitle.text = subtask.title
+                            subtaskRadioButton.isChecked = false
 
-                        subtaskRadioButton.setOnClickListener {
-                            val fadeOut = AlphaAnimation(1.0f, 0.0f)
-                            fadeOut.duration = 300
-                            fadeOut.fillAfter = true
+                            subtaskRadioButton.setOnClickListener {
+                                val fadeOut = AlphaAnimation(1.0f, 0.0f)
+                                fadeOut.duration = 300
+                                fadeOut.fillAfter = true
 
-                            fadeOut.setAnimationListener(object : Animation.AnimationListener {
-                                override fun onAnimationStart(animation: Animation?) {}
+                                fadeOut.setAnimationListener(object : Animation.AnimationListener {
+                                    override fun onAnimationStart(animation: Animation?) {}
 
-                                override fun onAnimationEnd(animation: Animation?) {
-                                    holder.subtasksContainer.removeView(subtaskView)
+                                    override fun onAnimationEnd(animation: Animation?) {
+                                        holder.subtasksContainer.removeView(subtaskView)
 
-                                    if (holder.subtasksContainer.childCount == 0) {
-                                        holder.subtasksContainer.visibility = View.GONE
+                                        if (holder.subtasksContainer.isEmpty()) {
+                                            holder.subtasksContainer.visibility = View.GONE
+                                        }
+
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            taskDao.deleteSubtask(subtask)
+                                        }
                                     }
 
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        taskDao.deleteSubtask(subtask)
-                                    }
-                                }
+                                    override fun onAnimationRepeat(animation: Animation?) {}
+                                })
 
-                                override fun onAnimationRepeat(animation: Animation?) {}
-                            })
+                                subtaskView.startAnimation(fadeOut)
+                            }
 
-                            subtaskView.startAnimation(fadeOut)
+                            holder.subtasksContainer.addView(subtaskView)
                         }
-
-                        holder.subtasksContainer.addView(subtaskView)
                     }
                 }
             }
         }
+
+        holder.currentTaskId = task.id
 
         holder.radioButton.setOnClickListener {
             val fadeOut = AlphaAnimation(1.0f, 0.0f)
