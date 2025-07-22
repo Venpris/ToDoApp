@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +25,7 @@ class TaskRecyclerViewAdapter(
         var icon: ImageView = itemView.findViewById(R.id.task_item_star_icon)
         val radioButton: RadioButton = itemView.findViewById(R.id.task_radio_button)
         val text: TextView = itemView.findViewById(R.id.task_title)
+        val subtasksContainer: LinearLayout = itemView.findViewById(R.id.subtasks_container)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -46,6 +48,58 @@ class TaskRecyclerViewAdapter(
             holder.icon.setImageResource(R.drawable.ic_star_filled)
         } else {
             holder.icon.setImageResource(R.drawable.ic_star_empty)
+        }
+
+        holder.subtasksContainer.removeAllViews()
+        holder.subtasksContainer.visibility = View.GONE
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val subtasks = taskDao.getSubtasksForTaskSync(task.id)
+
+            withContext(Dispatchers.Main) {
+                if (subtasks.isNotEmpty()) {
+                    holder.subtasksContainer.visibility = View.VISIBLE
+
+                    for (subtask in subtasks) {
+                        val subtaskView = LayoutInflater.from(holder.itemView.context)
+                            .inflate(R.layout.subtask_item, holder.subtasksContainer, false)
+
+                        val subtaskTitle = subtaskView.findViewById<TextView>(R.id.subtask_title)
+                        val subtaskRadioButton = subtaskView.findViewById<RadioButton>(R.id.subtask_radio_button)
+
+                        subtaskTitle.text = subtask.title
+                        subtaskRadioButton.isChecked = false
+
+                        subtaskRadioButton.setOnClickListener {
+                            val fadeOut = AlphaAnimation(1.0f, 0.0f)
+                            fadeOut.duration = 300
+                            fadeOut.fillAfter = true
+
+                            fadeOut.setAnimationListener(object : Animation.AnimationListener {
+                                override fun onAnimationStart(animation: Animation?) {}
+
+                                override fun onAnimationEnd(animation: Animation?) {
+                                    holder.subtasksContainer.removeView(subtaskView)
+
+                                    if (holder.subtasksContainer.childCount == 0) {
+                                        holder.subtasksContainer.visibility = View.GONE
+                                    }
+
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        taskDao.deleteSubtask(subtask)
+                                    }
+                                }
+
+                                override fun onAnimationRepeat(animation: Animation?) {}
+                            })
+
+                            subtaskView.startAnimation(fadeOut)
+                        }
+
+                        holder.subtasksContainer.addView(subtaskView)
+                    }
+                }
+            }
         }
 
         holder.radioButton.setOnClickListener {
@@ -78,24 +132,21 @@ class TaskRecyclerViewAdapter(
             holder.itemView.startAnimation(fadeOut)
         }
 
-        holder.icon.setOnClickListener {
-            holder.icon.isEnabled = false
-            val updatedTask = task.copy(isStarred = !task.isStarred)
-            CoroutineScope(Dispatchers.IO).launch {
-                taskDao.updateTasks(updatedTask)
-                withContext(Dispatchers.Main) {
-                    holder.icon.isEnabled = true
-                }
-            }
-        }
-
         holder.itemView.setOnClickListener {
             onTaskClick(task)
         }
+
+        holder.icon.setOnClickListener {
+            val updatedTask = task.copy(isStarred = !task.isStarred)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                taskDao.updateTasks(updatedTask)
+            }
+        }
     }
 
-    fun updateData(newItems: List<Task>) {
-        taskList = newItems
+    fun updateData(tasks: List<Task>) {
+        taskList = tasks
         notifyDataSetChanged()
     }
 }
